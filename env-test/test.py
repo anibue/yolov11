@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 import os
 
-# 选择使用方式：
+# 目标检测
 # 直接使用预训练模型
 def test_pretrained_model():
     """使用预训练模型进行检测"""
@@ -105,3 +105,55 @@ if __name__ == "__main__":
 
     # 验证模型加载
     verify_model()
+
+
+from ultralytics import YOLO
+
+model = YOLO("env-test/yolo11n.pt")  # 加载模型
+
+video_url = "sample-5s.mp4"  
+
+results = model.track(video_url, save=True, show=True)  
+
+
+"""
+export http_proxy="127.0.0.1:7890"
+export https_proxy="127.0.0.1:7890"
+
+"""
+
+
+# Benchmarking YOLO model performance
+
+# This code benchmarks the YOLO model on a specified dataset and image size.
+from ultralytics.utils.benchmarks import benchmark
+
+# Benchmark on CPU
+from pathlib import Path
+
+benchmark(model=Path("env-test/yolo11n.pt"), data="coco8.yaml", imgsz=640, half=False, device="cpu")
+
+# pose
+
+from ultralytics import YOLO
+    
+# Load a model
+model = YOLO("D:\\anibue\\yolov11\\yolo11n-pose.pt")  # load an official model
+
+# Predict with the model
+results = model("ultralytics/assets/bus.jpg")  # predict on an image
+ 
+# Access the results
+for result in results:
+    xy = result.keypoints.xy  # x and y coordinates
+    xyn = result.keypoints.xyn  # normalized
+    kpts = result.keypoints.data  # x, y, visibility (if available)
+
+# Show the results
+results[0].show()  # show keypoints on the image
+
+
+# Auto-annotate images using YOLO and SAM models
+from ultralytics.data.annotator import auto_annotate
+
+auto_annotate(data="D:\\anibue\\yolov11\\env-test\\bus.jpg", det_model="D:\\anibue\\yolov11\\yolo11n-pose.pt", sam_model="D:\\anibue\\yolov11\\sam2_b.pt")
